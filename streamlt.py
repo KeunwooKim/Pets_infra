@@ -7,10 +7,8 @@ import colorsys
 
 # GeoJSON 파일 로드 및 GeoDataFrame으로 변환
 seoul_geo_path = 'resource/seoul.geojson'
-try:
-    seoul_gdf = gpd.read_file(seoul_geo_path)
-except Exception as e:
-    print(f"Error reading GeoJSON file: {e}")
+
+seoul_gdf = gpd.read_file(seoul_geo_path)
 
 
 # 시설 데이터 로드
