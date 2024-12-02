@@ -6,7 +6,7 @@ import streamlit as st
 import colorsys
 
 # GeoJSON 파일 로드 및 GeoDataFrame으로 변환
-seoul_geo_path = 'resource/hangjeongdong_서울특별시.geojson'
+seoul_geo_path = 'resource/seoul.geojson'
 try:
     seoul_gdf = gpd.read_file(seoul_geo_path)
 except Exception as e:
@@ -14,7 +14,7 @@ except Exception as e:
 
 
 # 시설 데이터 로드
-facilities_df = pd.read_csv('resource/서울반려동물동반.csv', encoding='utf-8')
+facilities_df = pd.read_csv('resource/pet_seoulInfra.csv', encoding='utf-8')
 
 # 구별로 병합
 seoul_gu_gdf = seoul_gdf.dissolve(by='sggnm')
