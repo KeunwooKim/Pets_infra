@@ -1,3 +1,4 @@
+import os
 import json
 import pandas as pd
 import geopandas as gpd
@@ -5,12 +6,18 @@ import plotly.express as px
 import streamlit as st
 import colorsys
 
+# 현재 스크립트 파일의 디렉토리 경로 가져오기
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# GeoJSON 파일 및 CSV 파일 경로 설정
+seoul_geo_path = os.path.join(BASE_DIR, 'resource', 'hangjeongdong_서울특별시.geojson')
+facilities_csv_path = os.path.join(BASE_DIR, 'resource', '서울반려동물동반.csv')
+
 # GeoJSON 파일 로드 및 GeoDataFrame으로 변환
-seoul_geo_path = 'resource/hangjeongdong_서울특별시.geojson'
 seoul_gdf = gpd.read_file(seoul_geo_path)
 
 # 시설 데이터 로드
-facilities_df = pd.read_csv('resource/서울반려동물동반.csv', encoding='utf-8')
+facilities_df = pd.read_csv(facilities_csv_path, encoding='utf-8')
 
 # 구별로 병합
 seoul_gu_gdf = seoul_gdf.dissolve(by='sggnm')
@@ -27,7 +34,6 @@ seoul_gu_gdf['center'] = seoul_gu_gdf.geometry.centroid
 seoul_gu_gdf['center_lat'] = seoul_gu_gdf.center.y
 seoul_gu_gdf['center_lon'] = seoul_gu_gdf.center.x
 
-
 # 구별 고유한 색상 매핑 생성
 def generate_colors(n):
     colors = []
@@ -36,9 +42,8 @@ def generate_colors(n):
         saturation = 0.5
         value = 0.95
         rgb = colorsys.hsv_to_rgb(hue, saturation, value)
-        colors.append('rgb(255, 255, 255)')  # Placeholder color, replace with dynamic if needed
+        colors.append(f'rgb({int(rgb[0] * 255)}, {int(rgb[1] * 255)}, {int(rgb[2] * 255)})')
     return colors
-
 
 colors = generate_colors(len(gu_names))
 seoul_info['color'] = colors
@@ -60,7 +65,7 @@ marker_styles = {
     'default': {'image': 'url_to_default_image.png', 'size': 10}
 }
 
-
+# 지도 생성 함수
 def create_map(center_lat=37.563383, center_lon=126.996039, zoom=10, selected_gu=None):
     # 기본 지도 생성 (구 경계)
     fig = px.choropleth_mapbox(
@@ -125,7 +130,6 @@ def create_map(center_lat=37.563383, center_lon=126.996039, zoom=10, selected_gu
         margin={"r": 0, "t": 0, "l": 0, "b": 0}
     )
     return fig
-
 
 # Streamlit 웹 애플리케이션
 st.title('서울 반려동물 동반 시설 지도')
