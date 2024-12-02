@@ -6,3 +6,4 @@ pyproj
 shapely
 fiona
 rtree
+json
