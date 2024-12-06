@@ -6,7 +6,7 @@ import streamlit as st
 import colorsys
 
 # GeoJSON 파일 로드 및 GeoDataFrame으로 변환
-seoul_geo_path = './resource/seoul.geojson'
+seoul_geo_path = './resource/seoul.geojson'
 
 seoul_gdf = gpd.read_file(seoul_geo_path)
 
