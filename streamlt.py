@@ -1,9 +1,12 @@
+import json
 import pandas as pd
 import geopandas as gpd
 import pydeck as pdk
 import streamlit as st
 import plotly.express as px
 from streamlit_option_menu import option_menu
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 
 # 1. GeoJSON 파일 로드 및 GeoDataFrame으로 변환
@@ -55,7 +58,7 @@ grouped = seoul_infra.groupby(["시군구 명칭", "카테고리2"]).size().rese
 
 
 with st.sidebar:
-    choice = option_menu("Menu", ["서론", "본론", "결론", "데이터"],
+    choice = option_menu("Menu", ["서론", "EDA", "시연", "데이터"],
                          icons=['house', 'kanban', 'bi bi-robot', 'bi bi-boxes'],
                          menu_icon="app-indicator", default_index=0,
                          styles={
@@ -72,7 +75,7 @@ if choice == "서론":
     st.title("서론")
     st.write("서울시의 반려동물 수는 급증하고 있으며, 이에 따라 필요한 인프라의 확충이 요구되고 있습니다. 그러나 일부 지역에서는 인프라가 부족한 상황입니다. 본 연구는 서울시 내 반려동물 수와 인프라 분포를 비교하여 부족한 인프라가 어디에 필요한지 파악하는 것을 목표로 합니다.")
     # 인구수 막대그래프
-    st.title("서울 각 구별 인구수")
+    st.subheader("서울 각 구별 인구수")
     population_df_sorted = population_df.sort_values(by='인구수', ascending=False)
     population_bar = px.bar(
         population_df,
@@ -91,7 +94,7 @@ if choice == "서론":
     population_bar.update_traces(texttemplate='%{text:.2s}', textposition='outside')
     st.plotly_chart(population_bar, use_container_width=True)
     # 7. Streamlit으로 시각화
-    st.title("서울 구별 인구 3D 지도")
+    st.subheader("서울 구별 인구 3D 지도")
     onoff = st.toggle("인구수 3D")
     if onoff:
         # 6. 3D 효과를 위한 Pydeck 지도 설정 (구 선택 시 이름 표시)
@@ -171,7 +174,7 @@ if choice == "서론":
         st.pydeck_chart(deck)
 
     # 반려동물 등록 데이터 막대그래프
-    st.title("서울 각 구별 반려동물 등록 수")
+    st.subheader("서울 각 구별 반려동물 등록 수")
     pets_df_sorted = pets_df.sort_values(by='등록수', ascending=False)
     pets_bar = px.bar(
         pets_df,
@@ -189,7 +192,7 @@ if choice == "서론":
     )
     pets_bar.update_traces(texttemplate='%{text:.2s}', textposition='outside')
     st.plotly_chart(pets_bar, use_container_width=True)
-    st.title("서울 반려동물 등록 3D 지도")
+    st.subheader("서울 반려동물 등록 3D 지도")
     petonoff = st.toggle("반려동물 3D")
     if petonoff:
         petdeck = pdk.Deck(
@@ -271,11 +274,11 @@ if choice == "서론":
         st.pydeck_chart(petdeck)
 
 #인프라 분포 및 밀도 분석
-elif choice == "본론":
-    st.title("본론")
+elif choice == "EDA":
+    st.title("EDA")
     st.write("서울시의 반려동물 수와 인프라 분포를 분석한 결과, 반려동물이 많은 지역에서 인프라가 부족한 것으로 나타났습니다. 특히 강남구와 송파구는 인프라가 잘 갖춰져 있지만, 도봉구와 동작구와 같은 지역에서는 추가적인 인프라가 필요합니다.")
     # 인프라개수 막대그래프
-    st.title("서울 각 구별 인프라 수")
+    st.subheader("서울 각 구별 인프라 수")
     infra_df_sorted = infra_count.sort_values(by='인프라개수', ascending=False)
     infra_bar = px.bar(
         infra_df_sorted,
@@ -295,7 +298,7 @@ elif choice == "본론":
     st.plotly_chart(infra_bar, use_container_width=True)
 
     # 등록수 대비 인프라개수 막대그래프
-    st.title("등록수 대비 인프라 개수")
+    st.subheader("등록수 대비 인프라 개수")
     st.text("값이 클수록 인프라에 비해 등록된 반려동물이 많으므로 부족하다고 판단할 수 있습니다.")
     petsbyinfra_sorted = seoul_gdf_merged.sort_values(by='인프라당반려동물', ascending=False)
     petsbyinfra_bar = px.bar(
@@ -320,33 +323,209 @@ elif choice == "본론":
         infra_df,
         values="count",
         names="카테고리2",
-        title="반려동물 관련 카테고리 분포",
-        color_discrete_sequence=px.colors.sequential.RdBu  # 색상 설정 (옵션)
+        color_discrete_sequence=px.colors.qualitative.Set3,  # 색상 조정
     )
 
-    st.title("반려동물 관련 카테고리 분포")
+    st.subheader("서울시 반려동물 관련 카테고리 분포")
     st.plotly_chart(seoul_infrafig)
 
     # Plotly로 시각화
     category_order = grouped.groupby('카테고리2')['count'].sum().sort_values(ascending=False).index.tolist()
+    st.subheader("서울시 구별 카테고리 분포")
 
     seoul_gu_infrafig = px.bar(
         grouped,
         x="시군구 명칭",
         y="count",
         color="카테고리2",
-        title="구별 카테고리2 분포 (카테고리 총 개수 기준 정렬)",
         labels={"count": "개수", "시군구 명칭": "구 이름"},
-        color_discrete_sequence=px.colors.qualitative.Set3,  # 색상 조정
+        color_discrete_sequence=px.colors.qualitative.Set2,  # 색상 조정
         barmode="group",  # 그룹으로 막대 그래프 표시
         category_orders={"카테고리2": category_order}  # 카테고리 정렬 적용
     )
     st.plotly_chart(seoul_gu_infrafig)
+    st.subheader("인프라 부족한 지역과 많은 지역 카테고리 비교")
+    # 인프라당 반려동물 비율이 높은 상위 2개의 구 선택 (비율이 높을수록 인프라 부족)
+    top_2_cities_based_on_ratio = seoul_gdf_merged.nlargest(2, "인프라당반려동물")["sggnm"].tolist()
+
+    # 인프라당 반려동물 비율이 낮은 하위 2개의 구 선택 (비율이 낮을수록 인프라 충분)
+    bottom_2_cities_based_on_ratio = seoul_gdf_merged.nsmallest(2, "인프라당반려동물")["sggnm"].tolist()
+
+    # 상위 및 하위 구를 하나의 리스트로 합침
+    selected_cities_based_on_ratio = top_2_cities_based_on_ratio + bottom_2_cities_based_on_ratio
+
+    # grouped 데이터프레임에서 선택된 구에 해당하는 데이터 필터링
+    filtered_grouped_based_on_ratio = grouped[grouped["시군구 명칭"].isin(selected_cities_based_on_ratio)]
+
+    # 2x2 서브플롯 생성, 각 셀의 타입을 'domain'으로 지정
+    top_fig = make_subplots(
+        rows=2, cols=2,
+        specs=[[{'type': 'domain'}, {'type': 'domain'}],
+               [{'type': 'domain'}, {'type': 'domain'}]],
+        subplot_titles=selected_cities_based_on_ratio
+    )
+    st.subheader("")
+    # 각 구별로 파이 차트 생성 및 추가
+    row_col_positions = [(1, 1), (1, 2), (2, 1), (2, 2)]
+    for i, city in enumerate(selected_cities_based_on_ratio):
+        # 각 구별로 데이터 필터링
+        city_data = filtered_grouped_based_on_ratio[filtered_grouped_based_on_ratio["시군구 명칭"] == city]
+
+        # 파이 차트 추가
+        pie_chart = go.Pie(
+            labels=city_data["카테고리2"],
+            values=city_data["count"],
+            name=city,
+            hole=0.3
+        )
+        top_fig.add_trace(pie_chart, row=row_col_positions[i][0], col=row_col_positions[i][1])
+
+    # 레이아웃 설정
+    top_fig.update_layout(showlegend=False)
+
+    # Streamlit의 plotly_chart로 차트 표시
+    st.plotly_chart(top_fig)
+
 
 #필요한 인프라가 부족한 지역
-elif choice == "결론":
-    st.title("페이지 3")
-    st.write("여기는 페이지 3의 내용입니다.")
+elif choice == "시연":
+    # GeoJSON 파일 로드 및 GeoDataFrame으로 변환
+    seoul_geo_path = './resource/seoul_gu.geojson'
+    seoul_gdf = gpd.read_file(seoul_geo_path)
+
+    # 시설 데이터 로드
+    facilities_df = pd.read_csv('./resource/seoul_pets.csv', encoding='utf-8')
+
+    # 구별로 병합
+    seoul_gu_gdf = seoul_gdf.dissolve(by='sggnm')
+
+    # 병합된 GeoDataFrame을 GeoJSON 형식으로 변환
+    seoul_gu_geojson = json.loads(seoul_gu_gdf.to_json())
+
+    # 데이터프레임 생성 - 구 이름만 포함
+    gu_names = seoul_gu_gdf.index.tolist()
+    seoul_info = pd.DataFrame({"gu_name": gu_names})
+
+    # 각 구의 중심 좌표 계산
+    seoul_gu_gdf['center'] = seoul_gu_gdf.geometry.centroid
+    seoul_gu_gdf['center_lat'] = seoul_gu_gdf.center.y
+    seoul_gu_gdf['center_lon'] = seoul_gu_gdf.center.x
+
+
+    # 구별 고유한 색상 매핑 생성 (서울은 연두색으로 설정)
+    def generate_colors(n):
+        colors = ['rgb(210, 245, 115)'] * n  # 서울을 연두색으로 설정
+        return colors
+
+
+    colors = generate_colors(len(gu_names))
+    seoul_info['color'] = colors
+
+    marker_styles = {
+        '동물병원': {'size': 10, 'color': '#4F77A3', 'symbol': 'circle'},  # 부드러운 파란색
+        '동물약국': {'size': 10, 'color': '#6BBE72', 'symbol': 'circle'},  # 부드러운 초록색
+        '카페': {'size': 10, 'color': '#D86B47', 'symbol': 'circle'},  # 부드러운 빨간색
+        '식당': {'size': 10, 'color': '#E79A47', 'symbol': 'circle'},  # 부드러운 주황색
+        '미용': {'size': 10, 'color': '#9B64B7', 'symbol': 'circle'},  # 부드러운 보라색
+        '반려동물용품': {'size': 10, 'color': '#F19BC1', 'symbol': 'circle'},  # 부드러운 분홍색
+        '위탁관리': {'size': 10, 'color': '#F1D354', 'symbol': 'circle'},  # 부드러운 노란색
+        '미술관': {'size': 10, 'color': '#67C6C2', 'symbol': 'circle'},  # 부드러운 시안색
+        '박물관': {'size': 10, 'color': '#C97EC9', 'symbol': 'circle'},  # 부드러운 마젠타색
+        '문예회관': {'size': 10, 'color': '#A8A8A8', 'symbol': 'circle'},  # 부드러운 회색
+        '여행지': {'size': 10, 'color': '#757575', 'symbol': 'circle'},  # 부드러운 검은색
+        '펜션': {'size': 10, 'color': '#A66E44', 'symbol': 'circle'},  # 부드러운 갈색
+        'default': {'size': 10, 'color': '#D0D0D0', 'symbol': 'circle'}  # 부드러운 회색
+    }
+
+
+    def create_map(center_lat=37.563383, center_lon=126.996039, zoom=10, selected_gu=None):
+        # 기본 지도 생성 (구 경계)
+        fig = px.choropleth_mapbox(
+            seoul_info,
+            geojson=seoul_gu_geojson,
+            locations='gu_name',
+            color='gu_name',
+            color_discrete_map=dict(zip(seoul_info['gu_name'], seoul_info['color'])),
+            mapbox_style="carto-positron",
+            opacity=0.8
+        )
+
+        # 구별 시설 마커 추가
+        if selected_gu is not None:
+            mask = facilities_df['시군구 명칭'] == selected_gu
+            points_df = facilities_df[mask]
+
+            categories = points_df['카테고리3'].unique()
+
+            for category in categories:
+                category_points = points_df[points_df['카테고리3'] == category]
+                marker_style = marker_styles.get(category, marker_styles['default'])
+
+                fig.add_scattermapbox(
+                    lat=category_points['위도'],
+                    lon=category_points['경도'],
+                    mode='markers',
+                    marker=dict(
+                        size=marker_style['size'],
+                        symbol=marker_style['symbol'],  # 카테고리 기반 모양 설정
+                        color=marker_style['color'],  # 카테고리 기반 색상 설정
+                    ),
+                    text=category_points['시설명'],
+                    customdata=category_points[[
+                        '도로명주소', '전화번호', '운영시간', '휴무일',
+                        '주차 가능여부', '반려동물 동반 가능정보', '반려동물 전용 정보',
+                        '입장 가능 동물 크기', '반려동물 제한사항', '장소(실내) 여부',
+                        '애견 동반 추가 요금', '기본 정보_장소설명'
+                    ]],
+                    hovertemplate=(
+                            "<b>%{text}</b><br><br>" +
+                            "카테고리: " + category + "<br>" +
+                            "주소: %{customdata[0]}<br>" +
+                            "전화번호: %{customdata[1]}<br>" +
+                            "운영시간: %{customdata[2]}<br>" +
+                            "휴무일: %{customdata[3]}<br>" +
+                            "주차 가능여부: %{customdata[4]}<br>" +
+                            "반려동물 동반 가능정보: %{customdata[5]}<br>" +
+                            "반려동물 전용 정보: %{customdata[6]}<br>" +
+                            "입장 가능 동물 크기: %{customdata[7]}<br>" +
+                            "반려동물 제한사항: %{customdata[8]}<br>" +
+                            "장소: %{customdata[9]}<br>" +
+                            "애견 동반 추가 요금: %{customdata[10]}<br>" +
+                            "기본 정보: %{customdata[11]}<extra></extra>"
+                    ),
+                    name=category
+                )
+
+        # 구 선택이 없다면 서울 전체 지도, 구 선택이 있으면 선택된 구 중심에 맞춘 지도
+        if selected_gu is not None:
+            center_lat = seoul_gu_gdf.loc[selected_gu].center_lat
+            center_lon = seoul_gu_gdf.loc[selected_gu].center_lon
+            zoom = 12  # 선택된 구에 맞는 줌 레벨 설정
+        else:
+            center_lat = 37.563383  # 서울의 중앙 위도
+            center_lon = 126.996039  # 서울의 중앙 경도
+            zoom = 10  # 서울의 전체 지도를 보여주기 위한 줌 레벨
+
+        fig.update_layout(
+            mapbox=dict(
+                center=dict(lat=center_lat, lon=center_lon),
+                zoom=zoom
+            ),
+            margin={"r": 0, "t": 0, "l": 0, "b": 0}
+        )
+
+        return fig
+
+
+    # Streamlit 웹 애플리케이션
+    st.title('서울 반려동물 동반 시설 지도')
+
+    selected_gu = st.selectbox('구 선택', [None] + gu_names)
+
+    # 지도 출력
+    map = create_map(selected_gu=selected_gu)
+    st.plotly_chart(map, use_container_width=True)
+
 elif choice == "데이터":
     # 인구 데이터 확인
     st.subheader("인구 데이터 프레임")
@@ -369,8 +548,6 @@ elif choice == "데이터":
 #     xaxis_tickfont=dict(size=12),  # x축 눈금 폰트 크기
 #     yaxis_tickfont=dict(size=12)  # y축 눈금 폰트 크기
 # )
-
-
 
 
 
