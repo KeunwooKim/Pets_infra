@@ -10,19 +10,22 @@ from plotly.subplots import make_subplots
 
 
 # 1. GeoJSON 파일 로드 및 GeoDataFrame으로 변환
-seoul_geo_path = './resource/seoul_gu.geojson'
+seoul_geo_path = '.resource/seoul_gu.geojson'
 seoul_gdf = gpd.read_file(seoul_geo_path)
 
 # 2. 구별로 병합
 seoul_gu_gdf = seoul_gdf.dissolve(by='sggnm')
 
 # 3. 인구,반려동물 데이터 로드
-population_df = pd.read_csv('./resource/seoul_pop.csv', encoding='utf-8')
-pets_df = pd.read_csv('./resource/pets_count.csv', encoding='utf-8')
+population_df = pd.read_csv('.resource/seoul_pop.csv', encoding='utf-8')
+pets_df = pd.read_csv('.resource/pets_count.csv', encoding='utf-8')
 # 인프라 개수 데이터 로드
-infra_count = pd.read_csv("./resource/infra_count.csv", encoding='utf-8')
+infra_count = pd.read_csv(".resource/infra_count.csv", encoding='utf-8')
 # 좌표 데이터 로드
-seoul_infra = pd.read_csv('./resource/seoul_pets.csv', encoding="UTF-8")
+seoul_infra = pd.read_csv('.resource/seoul_pets.csv', encoding="UTF-8")
+# GeoJSON 파일 로드
+all_geojson_file = ".resource/all_do.geojson"
+allgeo_data = gpd.read_file(all_geojson_file)
 
 base_color = 'rgb(255, 202, 67)'
 
@@ -273,6 +276,38 @@ if choice == "서론":
         )
         st.pydeck_chart(petdeck)
 
+        # 반려가구 수 데이터프레임 생성
+        household_data = {
+            "시도": ["서울특별시", "인천광역시", "경기도", "강원특별자치도", "충청남도", "충청북도", "세종특별자치시",
+                   "대전광역시", "경상북도", "대구광역시", "전라북도", "경상남도", "광주광역시",
+                   "전라남도", "제주특별자치도", "부산광역시", "울산광역시"],
+            "반려가구 수": [110, 33, 129, 18, 24, 14, 3, 12, 30, 33, 13, 40, 14, 23, 7, 35, 12]
+        }
+        df_household = pd.DataFrame(household_data)
+
+        # GeoJSON 데이터와 반려가구 데이터 병합
+        allgeo_data = allgeo_data.merge(df_household, left_on="CTP_KOR_NM", right_on="시도", how="left")
+
+        # Plotly로 Choropleth Map 생성
+        all_fig = px.choropleth_mapbox(
+            allgeo_data,
+            geojson=allgeo_data.geometry,
+            locations=allgeo_data.index,
+            color="반려가구 수",
+            color_continuous_scale=[
+                [0, 'rgb(210, 245, 115)'],  # 시작 색상
+                [1, 'rgb(28, 89, 60)']  # 끝 색상
+            ],
+            mapbox_style="carto-positron",
+            center={"lat": 36.505354, "lon": 127.704341},  # 한국 중심
+            zoom=5.5,
+            opacity=1,
+            labels={"반려가구 수": "반려가구 수"}
+        )
+
+        # Streamlit에서 앱 구성
+        st.title("전국 반려가구 수 지도")
+        st.plotly_chart(all_fig)
 #인프라 분포 및 밀도 분석
 elif choice == "EDA":
     st.title("EDA")
@@ -318,12 +353,16 @@ elif choice == "EDA":
     petsbyinfra_bar.update_traces(texttemplate='%{text:.3s}', textposition='outside')
     st.plotly_chart(petsbyinfra_bar, use_container_width=True)
 
-    # 카테고리 파이 그래프
     seoul_infrafig = px.pie(
         infra_df,
         values="count",
         names="카테고리2",
-        color_discrete_sequence=px.colors.qualitative.Set3,  # 색상 조정
+        color_discrete_sequence=[
+            'rgb(68, 128, 63)',  # 첫 번째 색상
+            'rgb(89, 168, 83)',  # 두 번째 색상
+            'rgb(255, 139, 73)',  # 세 번째 색상
+            'rgb(255, 205, 74)'  # 네 번째 색상
+        ]
     )
 
     st.subheader("서울시 반려동물 관련 카테고리 분포")
@@ -339,10 +378,16 @@ elif choice == "EDA":
         y="count",
         color="카테고리2",
         labels={"count": "개수", "시군구 명칭": "구 이름"},
-        color_discrete_sequence=px.colors.qualitative.Set2,  # 색상 조정
+        color_discrete_sequence=[
+            'rgb(68, 128, 63)',  # 첫 번째 색상
+            'rgb(89, 168, 83)',  # 두 번째 색상
+            'rgb(255, 139, 73)',  # 세 번째 색상
+            'rgb(255, 205, 74)'  # 네 번째 색상
+        ],
         barmode="group",  # 그룹으로 막대 그래프 표시
         category_orders={"카테고리2": category_order}  # 카테고리 정렬 적용
     )
+
     st.plotly_chart(seoul_gu_infrafig)
     st.subheader("인프라 부족한 지역과 많은 지역 카테고리 비교")
     # 인프라당 반려동물 비율이 높은 상위 2개의 구 선택 (비율이 높을수록 인프라 부족)
@@ -376,8 +421,17 @@ elif choice == "EDA":
             labels=city_data["카테고리2"],
             values=city_data["count"],
             name=city,
-            hole=0.3
+            hole=0.3,
+            marker=dict(
+                colors=[
+                    'rgb(89, 168, 83)',  # 반려의료
+                    'rgb(255, 205, 74)',  # 반려동물 서비스
+                    'rgb(255, 139, 73)',  # 반려동반여행
+                    'rgb(68, 128, 63)'  # 반려동식당카
+                ]
+            )
         )
+
         top_fig.add_trace(pie_chart, row=row_col_positions[i][0], col=row_col_positions[i][1])
 
     # 레이아웃 설정
@@ -390,11 +444,11 @@ elif choice == "EDA":
 #필요한 인프라가 부족한 지역
 elif choice == "시연":
     # GeoJSON 파일 로드 및 GeoDataFrame으로 변환
-    seoul_geo_path = './resource/seoul_gu.geojson'
+    seoul_geo_path = '.resource/seoul_gu.geojson'
     seoul_gdf = gpd.read_file(seoul_geo_path)
 
     # 시설 데이터 로드
-    facilities_df = pd.read_csv('./resource/seoul_pets.csv', encoding='utf-8')
+    facilities_df = pd.read_csv('.resource/seoul_pets.csv', encoding='utf-8')
 
     # 구별로 병합
     seoul_gu_gdf = seoul_gdf.dissolve(by='sggnm')
