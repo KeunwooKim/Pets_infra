@@ -62,7 +62,7 @@ with st.sidebar:
                          icons=['kanban','bi bi-pin-map-fill','bi bi-database-fill'],
                          menu_icon="app-indicator", default_index=0,
                          styles={
-        "container": {"padding": "4!important", "background-color": "#fafafa"},
+        "container": {"padding": "4!important", "background-color": "#D9D9D9"},
         "icon": {"color": "black", "font-size": "25px"},
         "nav-link": {"font-size": "16px", "text-align": "left", "margin":"0px", "--hover-color": "#fafafa"},
         "nav-link-selected": {"background-color": "#08c7b4"},
