@@ -515,7 +515,7 @@ elif choice == "시연":
         if selected_gu is not None:
             center_lat = seoul_gu_gdf.loc[selected_gu].center_lat
             center_lon = seoul_gu_gdf.loc[selected_gu].center_lon
-            zoom = 9  # 선택된 구에 맞는 줌 레벨 설정
+            zoom = 11  # 선택된 구에 맞는 줌 레벨 설정
         else:
             center_lat = 37.563383  # 서울의 중앙 위도
             center_lon = 126.996039  # 서울의 중앙 경도
