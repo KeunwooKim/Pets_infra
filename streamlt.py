@@ -122,7 +122,7 @@ if choice == "EDA":
             initial_view_state=pdk.ViewState(
                 latitude=37.563383,
                 longitude=126.996039,
-                zoom=8,
+                zoom=9,
                 pitch=45,  # 지도 기울기 설정
                 bearing=0,  # 회전 각도 설정
             ),
@@ -160,7 +160,7 @@ if choice == "EDA":
             initial_view_state=pdk.ViewState(
                 latitude=37.563383,
                 longitude=126.996039,
-                zoom=8,
+                zoom=9,
                 pitch=45,  # 지도 기울기 설정
                 bearing=0,  # 회전 각도 설정
             ),
@@ -220,7 +220,7 @@ if choice == "EDA":
             initial_view_state=pdk.ViewState(
                 latitude=37.563383,
                 longitude=126.996039,
-                zoom=8,
+                zoom=9,
                 pitch=45,
                 bearing=0,
             ),
@@ -259,7 +259,7 @@ if choice == "EDA":
             initial_view_state=pdk.ViewState(
                 latitude=37.563383,
                 longitude=126.996039,
-                zoom=8,
+                zoom=9,
                 pitch=45,
                 bearing=0,
             ),
@@ -515,11 +515,11 @@ elif choice == "시연":
         if selected_gu is not None:
             center_lat = seoul_gu_gdf.loc[selected_gu].center_lat
             center_lon = seoul_gu_gdf.loc[selected_gu].center_lon
-            zoom = 12  # 선택된 구에 맞는 줌 레벨 설정
+            zoom = 9  # 선택된 구에 맞는 줌 레벨 설정
         else:
             center_lat = 37.563383  # 서울의 중앙 위도
             center_lon = 126.996039  # 서울의 중앙 경도
-            zoom = 10  # 서울의 전체 지도를 보여주기 위한 줌 레벨
+            zoom = 8  # 서울의 전체 지도를 보여주기 위한 줌 레벨
 
         fig.update_layout(
             mapbox=dict(
