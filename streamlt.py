@@ -122,7 +122,7 @@ if choice == "EDA":
             initial_view_state=pdk.ViewState(
                 latitude=37.563383,
                 longitude=126.996039,
-                zoom=10,
+                zoom=8,
                 pitch=45,  # 지도 기울기 설정
                 bearing=0,  # 회전 각도 설정
             ),
@@ -160,7 +160,7 @@ if choice == "EDA":
             initial_view_state=pdk.ViewState(
                 latitude=37.563383,
                 longitude=126.996039,
-                zoom=10,
+                zoom=8,
                 pitch=45,  # 지도 기울기 설정
                 bearing=0,  # 회전 각도 설정
             ),
@@ -220,7 +220,7 @@ if choice == "EDA":
             initial_view_state=pdk.ViewState(
                 latitude=37.563383,
                 longitude=126.996039,
-                zoom=10,
+                zoom=8,
                 pitch=45,
                 bearing=0,
             ),
@@ -259,7 +259,7 @@ if choice == "EDA":
             initial_view_state=pdk.ViewState(
                 latitude=37.563383,
                 longitude=126.996039,
-                zoom=10,
+                zoom=8,
                 pitch=45,
                 bearing=0,
             ),
