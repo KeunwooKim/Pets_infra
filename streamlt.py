@@ -58,8 +58,8 @@ grouped = seoul_infra.groupby(["시군구 명칭", "카테고리2"]).size().rese
 
 
 with st.sidebar:
-    choice = option_menu("Menu", ["서론", "EDA", "시연", "데이터"],
-                         icons=['house', 'kanban', 'bi bi-robot', 'bi bi-boxes'],
+    choice = option_menu("Menu", ["EDA", "시연", "데이터"],
+                         icons=['house', 'kanban', 'bi bi-robot'],
                          menu_icon="app-indicator", default_index=0,
                          styles={
         "container": {"padding": "4!important", "background-color": "#fafafa"},
@@ -71,8 +71,8 @@ with st.sidebar:
 
 # 페이지 전환 로직
 #인프라 부족 현황과 반려동물 수
-if choice == "서론":
-    st.title("서론")
+if choice == "EDA":
+    st.title("EDA")
     st.write("서울시의 반려동물 수는 급증하고 있으며, 이에 따라 필요한 인프라의 확충이 요구되고 있습니다. 그러나 일부 지역에서는 인프라가 부족한 상황입니다. 본 연구는 서울시 내 반려동물 수와 인프라 분포를 비교하여 부족한 인프라가 어디에 필요한지 파악하는 것을 목표로 합니다.")
     # 인구수 막대그래프
     st.subheader("서울 각 구별 인구수")
@@ -173,7 +173,7 @@ if choice == "서론":
         )
         st.pydeck_chart(deck)
 
-    # 반려동물 등록 데이터 막대그래프
+    # 반려동물 등록 시연1 막대그래프
     st.subheader("서울 각 구별 반려동물 등록 수")
     pets_df_sorted = pets_df.sort_values(by='등록수', ascending=False)
     pets_bar = px.bar(
@@ -273,10 +273,6 @@ if choice == "서론":
         )
         st.pydeck_chart(petdeck)
 
-#인프라 분포 및 밀도 분석
-elif choice == "EDA":
-    st.title("EDA")
-    st.write("서울시의 반려동물 수와 인프라 분포를 분석한 결과, 반려동물이 많은 지역에서 인프라가 부족한 것으로 나타났습니다. 특히 강남구와 송파구는 인프라가 잘 갖춰져 있지만, 도봉구와 동작구와 같은 지역에서는 추가적인 인프라가 필요합니다.")
     # 인프라개수 막대그래프
     st.subheader("서울 각 구별 인프라 수")
     infra_df_sorted = infra_count.sort_values(by='인프라개수', ascending=False)
@@ -406,7 +402,7 @@ elif choice == "EDA":
     st.plotly_chart(top_fig)
 
 
-#필요한 인프라가 부족한 지역
+#인프라 분포 및 밀도 분석
 elif choice == "시연":
     # GeoJSON 파일 로드 및 GeoDataFrame으로 변환
     seoul_geo_path = './resource/seoul_gu.geojson'
