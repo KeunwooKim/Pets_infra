@@ -549,7 +549,7 @@ elif choice == "데이터":
     st.subheader("반려동물등록 데이터 프레임")
     st.write(pets_df)  # 데이터프레임의 상위 5개 행 출력
     # 구별 인프라 개수 데이터 확인
-    st.subheader("구별 인프라 개수 데이터 프레임")
+    st.subheader("구별 인프라 데이터 프레임")
     st.write(seoul_infra)  # 데이터프레임의 상위 5개 행 출력
     # 인구 데이터 확인
     st.subheader("결합 데이터 프레임")
