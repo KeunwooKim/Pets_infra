@@ -59,7 +59,7 @@ grouped = seoul_infra.groupby(["시군구 명칭", "카테고리2"]).size().rese
 
 with st.sidebar:
     choice = option_menu("Menu", ["EDA", "시연", "데이터"],
-                         icons=['house', 'kanban', 'bi bi-robot'],
+                         icons=['kanban','bi bi-pin-map-fill','bi bi-database-fill'],
                          menu_icon="app-indicator", default_index=0,
                          styles={
         "container": {"padding": "4!important", "background-color": "#fafafa"},
