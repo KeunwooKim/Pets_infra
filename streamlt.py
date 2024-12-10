@@ -226,8 +226,7 @@ if choice == "EDA":
             ),
             tooltip={
                 "html": "<b>구 이름:</b> {sggnm}<br>"
-                        "<b>반려동물 등록 수:</b> {등록수}<br>"
-                        "<b>인프라당 반려동물:</b> {인프라당반려동물:.2f}",
+                        "<b>반려동물 등록 수:</b> {등록수}<br>",
                 "style": {"backgroundColor": "darkorange", "color": "white"},
             },
             map_style="light",
