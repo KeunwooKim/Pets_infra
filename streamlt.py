@@ -438,7 +438,7 @@ elif choice == "시연":
 
     # 구별 고유한 색상 매핑 생성 (서울은 연두색으로 설정)
     def generate_colors(n):
-        colors = ['rgb(210, 245, 115)'] * n  # 서울을 연두색으로 설정
+        colors = ['rgb(8,199,180)'] * n  # 서울을 연두색으로 설정
         return colors
 
 
