@@ -442,7 +442,7 @@ elif choice == "시연":
         return colors
 
 
-    colors = "generate_colors(len(gu_names))"
+    colors = generate_colors(len(gu_names))
     seoul_info['color'] = colors
 
     marker_styles = {
