@@ -73,7 +73,6 @@ with st.sidebar:
 #인프라 부족 현황과 반려동물 수
 if choice == "EDA":
     st.title("EDA")
-    st.write("서울시의 반려동물 수는 급증하고 있으며, 이에 따라 필요한 인프라의 확충이 요구되고 있습니다. 그러나 일부 지역에서는 인프라가 부족한 상황입니다. 본 연구는 서울시 내 반려동물 수와 인프라 분포를 비교하여 부족한 인프라가 어디에 필요한지 파악하는 것을 목표로 합니다.")
     # 인구수 막대그래프
     st.subheader("서울 각 구별 인구수")
     population_df_sorted = population_df.sort_values(by='인구수', ascending=False)
@@ -303,7 +302,6 @@ if choice == "EDA":
 
     # 등록수 대비 인프라개수 막대그래프
     st.subheader("등록수 대비 인프라 개수")
-    st.text("값이 클수록 인프라에 비해 등록된 반려동물이 많으므로 부족하다고 판단할 수 있습니다.")
     petsbyinfra_sorted = seoul_gdf_merged.sort_values(by='인프라당반려동물', ascending=False)
     petsbyinfra_bar = px.bar(
         petsbyinfra_sorted,
@@ -334,18 +332,22 @@ if choice == "EDA":
         ]
     )
 
-    st.subheader("서울시 반려동물 관련 카테고리 분포")
+    st.subheader("서울시 반려동물 관련 중분류 분포")
     st.plotly_chart(seoul_infrafig)
 
     # Plotly로 시각화
-    category_order = grouped.groupby('카테고리2')['count'].sum().sort_values(ascending=False).index.tolist()
-    st.subheader("서울시 구별 카테고리 분포")
+    # '카테고리2' 컬럼을 '중분류'로 이름 변경
+    grouped = grouped.rename(columns={'카테고리2': '중분류'})
+
+    # '중분류' 컬럼을 기준으로 그룹화 및 정렬
+    category_order = grouped.groupby('중분류')['count'].sum().sort_values(ascending=False).index.tolist()
+    st.subheader("서울시 구별 중분류 분포")
 
     seoul_gu_infrafig = px.bar(
         grouped,
         x="시군구 명칭",
         y="count",
-        color="카테고리2",
+        color="중분류",
         labels={"count": "개수", "시군구 명칭": "구 이름"},
         color_discrete_sequence=[
             'rgb(68, 128, 63)',  # 첫 번째 색상
@@ -354,11 +356,10 @@ if choice == "EDA":
             'rgb(255, 205, 74)'  # 네 번째 색상
         ],
         barmode="group",  # 그룹으로 막대 그래프 표시
-        category_orders={"카테고리2": category_order}  # 카테고리 정렬 적용
+        category_orders={"중분류": category_order}  # 카테고리 정렬 적용
     )
 
     st.plotly_chart(seoul_gu_infrafig)
-    st.subheader("인프라 부족한 지역과 많은 지역 카테고리 비교")
     # 인프라당 반려동물 비율이 높은 상위 2개의 구 선택 (비율이 높을수록 인프라 부족)
     top_2_cities_based_on_ratio = seoul_gdf_merged.nlargest(2, "인프라당반려동물")["sggnm"].tolist()
 
@@ -387,7 +388,7 @@ if choice == "EDA":
 
         # 파이 차트 추가
         pie_chart = go.Pie(
-            labels=city_data["카테고리2"],
+            labels=city_data["중분류"],
             values=city_data["count"],
             name=city,
             hole=0.3,
@@ -404,8 +405,8 @@ if choice == "EDA":
         top_fig.add_trace(pie_chart, row=row_col_positions[i][0], col=row_col_positions[i][1])
 
     # 레이아웃 설정
-    top_fig.update_layout(showlegend=False)
-
+    top_fig.update_layout(showlegend=True)
+    st.subheader("인프라 부족한 지역과 많은 지역 인프라 비교")
     # Streamlit의 plotly_chart로 차트 표시
     st.plotly_chart(top_fig)
 
@@ -571,9 +572,3 @@ elif choice == "데이터":
 #     xaxis_tickfont=dict(size=12),  # x축 눈금 폰트 크기
 #     yaxis_tickfont=dict(size=12)  # y축 눈금 폰트 크기
 # )
-
-
-
-
-
-
