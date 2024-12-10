@@ -566,6 +566,18 @@ elif choice == "데이터":
     st.write(seoul_infra)  # 데이터프레임의 상위 5개 행 출력
     # 인구 데이터 확인
     st.subheader("결합 데이터 프레임")
+    seoul_gdf_merged = seoul_gdf_merged.drop(columns=["시군구", "행정구역명"])
+
+    new_order = [
+        "sggnm",  "인구수", "등록수",
+        "인프라개수", "정규화인구", "정규화반려동물", "인프라당반려동물",
+        "geometry", "OBJECTID", "adm_nm", "adm_cd", "adm_cd2", "sgg",
+        "sido", "sidonm",
+    ]
+
+    # 열 순서 변경
+    seoul_gdf_merged = seoul_gdf_merged[new_order]
+
     st.write(seoul_gdf_merged)  # 데이터프레임의 상위 5개 행 출력
 
 # 8. 인구수 및 반려동물 데이터 시각화 - 막대그래프
