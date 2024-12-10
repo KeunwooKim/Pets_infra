@@ -574,9 +574,9 @@ elif choice == "데이터":
         "geometry", "OBJECTID", "adm_nm", "adm_cd", "adm_cd2", "sgg",
         "sido", "sidonm",
     ]
-
     # 열 순서 변경
     seoul_gdf_merged = seoul_gdf_merged[new_order]
+    pets_df = pets_df.rename(columns={'sggnm': '자치구'})
 
     st.write(seoul_gdf_merged)  # 데이터프레임의 상위 5개 행 출력
 
