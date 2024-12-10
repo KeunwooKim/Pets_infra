@@ -304,7 +304,42 @@ if choice == "EDA":
     )
     infra_bar.update_traces(texttemplate='%{text:.2s}', textposition='outside')
     st.plotly_chart(infra_bar, use_container_width=True)
+    
+    seoul_infrafig = px.pie(
+        infra_df,
+        values="count",
+        names="카테고리2",
+        color_discrete_sequence=[
+            'rgb(68, 128, 63)',  # 첫 번째 색상
+            'rgb(89, 168, 83)',  # 두 번째 색상
+            'rgb(255, 139, 73)',  # 세 번째 색상
+            'rgb(255, 205, 74)'  # 네 번째 색상
+        ]
+    )
 
+    st.subheader("서울시 반려동물 관련 중분류 분포")
+    st.plotly_chart(seoul_infrafig)
+
+    # Plotly로 시각화
+    st.subheader("서울시 구별 중분류 분포")
+
+    seoul_gu_infrafig = px.bar(
+        grouped,
+        x="시군구 명칭",
+        y="count",
+        color="중분류",
+        labels={"count": "개수", "시군구 명칭": "자치구"},
+        color_discrete_sequence=[
+            'rgb(68, 128, 63)',  # 첫 번째 색상
+            'rgb(89, 168, 83)',  # 두 번째 색상
+            'rgb(255, 139, 73)',  # 세 번째 색상
+            'rgb(255, 205, 74)'  # 네 번째 색상
+        ],
+        barmode="group",  # 그룹으로 막대 그래프 표시
+        category_orders={"중분류": category_order}  # 카테고리 정렬 적용
+    )
+
+    st.plotly_chart(seoul_gu_infrafig)
     # 등록수 대비 인프라개수 막대그래프
     st.subheader("등록수 대비 인프라 개수")
     petsbyinfra_sorted = seoul_gdf_merged.sort_values(by='인프라당반려동물', ascending=False)
@@ -373,41 +408,7 @@ if choice == "EDA":
     # Streamlit의 plotly_chart로 차트 표시
     st.plotly_chart(top_fig)
 
-    seoul_infrafig = px.pie(
-        infra_df,
-        values="count",
-        names="카테고리2",
-        color_discrete_sequence=[
-            'rgb(68, 128, 63)',  # 첫 번째 색상
-            'rgb(89, 168, 83)',  # 두 번째 색상
-            'rgb(255, 139, 73)',  # 세 번째 색상
-            'rgb(255, 205, 74)'  # 네 번째 색상
-        ]
-    )
 
-    st.subheader("서울시 반려동물 관련 중분류 분포")
-    st.plotly_chart(seoul_infrafig)
-
-    # Plotly로 시각화
-    st.subheader("서울시 구별 중분류 분포")
-
-    seoul_gu_infrafig = px.bar(
-        grouped,
-        x="시군구 명칭",
-        y="count",
-        color="중분류",
-        labels={"count": "개수", "시군구 명칭": "자치구"},
-        color_discrete_sequence=[
-            'rgb(68, 128, 63)',  # 첫 번째 색상
-            'rgb(89, 168, 83)',  # 두 번째 색상
-            'rgb(255, 139, 73)',  # 세 번째 색상
-            'rgb(255, 205, 74)'  # 네 번째 색상
-        ],
-        barmode="group",  # 그룹으로 막대 그래프 표시
-        category_orders={"중분류": category_order}  # 카테고리 정렬 적용
-    )
-
-    st.plotly_chart(seoul_gu_infrafig)
 
 
 #인프라 분포 및 밀도 분석
