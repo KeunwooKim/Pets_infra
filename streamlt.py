@@ -225,9 +225,14 @@ if choice == "EDA":
                 bearing=0,
             ),
             tooltip={
-                "html": "<b>구 이름:</b> {sggnm}<br>"
-                        "<b>반려동물 등록 수:</b> {등록수}<br>",
-                "style": {"backgroundColor": "darkorange", "color": "white"},
+                "html": (
+                    "<b>구 이름:</b> {sggnm}<br>"
+                    "<b>인구 수:</b> {인구수}<br>"
+                ),
+                "style": {
+                    "backgroundColor": "darkorange",
+                    "color": "white"
+                },
             },
             map_style="light",
         )
@@ -263,9 +268,14 @@ if choice == "EDA":
                 bearing=0,
             ),
             tooltip={
-                "html": "<b>구 이름:</b> {sggnm}<br>"
-                        "<b>반려동물 등록 수:</b> {등록수}<br>"
-                "style": {"backgroundColor": "darkorange", "color": "white"},
+                "html": (
+                    "<b>구 이름:</b> {sggnm}<br>"
+                    "<b>반려동물 등록 수:</b> {등록수}<br>"
+                ),
+                "style": {
+                    "backgroundColor": "darkorange",
+                    "color": "white"
+                },
             },
             map_style="light",
         )
