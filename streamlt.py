@@ -553,9 +553,13 @@ elif choice == "시연":
 elif choice == "데이터":
     # 인구 데이터 확인
     st.subheader("인구 데이터 프레임")
+    population_df = population_df.rename(columns={'동별': '자치구'})
+
     st.write(population_df)  # 데이터프레임의 상위 5개 행 출력
     # 반려동물등록 데이터 확인
     st.subheader("반려동물등록 데이터 프레임")
+    pets_df = pets_df.rename(columns={'시군구': '자치구'})
+
     st.write(pets_df)  # 데이터프레임의 상위 5개 행 출력
     # 구별 인프라 개수 데이터 확인
     st.subheader("구별 인프라 데이터 프레임")
