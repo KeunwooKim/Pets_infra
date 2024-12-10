@@ -80,7 +80,7 @@ if choice == "EDA":
         population_df,
         x='동별',
         y='인구수',
-        labels={'동별': '구 이름', '인구수': '인구 수'},
+        labels={'동별': '자치구', '인구수': '인구 수'},
         text='인구수',  # 바에 표시될 텍스트
         template='plotly',
         category_orders={'동별': population_df_sorted['동별']},  # 높은 순으로 정렬된 '동별' 순서 적용
@@ -126,7 +126,7 @@ if choice == "EDA":
                 bearing=0,  # 회전 각도 설정
             ),
             tooltip={
-                "html": "<b>구 이름:</b> {sggnm}<br>"
+                "html": "<b>자치구:</b> {sggnm}<br>"
                         "<b>인구수:</b> {인구수}<br>",
                 "style": {"backgroundColor": "darkorange", "color": "white"},
             },
@@ -164,7 +164,7 @@ if choice == "EDA":
                 bearing=0,  # 회전 각도 설정
             ),
             tooltip={
-                "html": "<b>구 이름:</b> {sggnm}<br>"
+                "html": "<b>자치구:</b> {sggnm}<br>"
                         "<b>인구수:</b> {인구수}<br>",
                 "style": {"backgroundColor": "darkorange", "color": "white"},
             },
@@ -179,7 +179,7 @@ if choice == "EDA":
         pets_df,
         x='sggnm',
         y='등록수',
-        labels={'sggnm': '구 이름', '등록수': '등록수'},
+        labels={'sggnm': '자치구', '등록수': '등록수'},
         text='등록수',
         template='plotly_white',
         category_orders={'sggnm': pets_df_sorted['sggnm']},  # 높은 순으로 정렬된 'sggnm' 순서 적용
@@ -225,7 +225,7 @@ if choice == "EDA":
             ),
             tooltip={
                 "html": (
-                    "<b>구 이름:</b> {sggnm}<br>"
+                    "<b>자치구:</b> {sggnm}<br>"
                     "<b>인구 수:</b> {인구수}<br>"
                 ),
                 "style": {
@@ -268,7 +268,7 @@ if choice == "EDA":
             ),
             tooltip={
                 "html": (
-                    "<b>구 이름:</b> {sggnm}<br>"
+                    "<b>자치구:</b> {sggnm}<br>"
                     "<b>반려동물 등록 수:</b> {등록수}<br>"
                 ),
                 "style": {
@@ -287,7 +287,7 @@ if choice == "EDA":
         infra_df_sorted,
         x='sggnm',
         y='인프라개수',
-        labels={'sggnm': '구 이름', '등록수': '등록 수'},
+        labels={'sggnm': '자치구', '등록수': '등록 수'},
         text='인프라개수',
         template='plotly_white',
         category_orders={'sggnm': infra_df_sorted['sggnm']},  # 높은 순으로 정렬된 'sggnm' 순서 적용
@@ -307,7 +307,7 @@ if choice == "EDA":
         petsbyinfra_sorted,
         x='sggnm',
         y='인프라당반려동물',
-        labels={'sggnm': '구 이름', '등록수': '등록 수'},
+        labels={'sggnm': '자치구', '등록수': '등록 수'},
         text='인프라당반려동물',
         template='plotly_white',
         category_orders={'sggnm': petsbyinfra_sorted['sggnm']},  # 높은 순으로 정렬된 'sggnm' 순서 적용
@@ -348,7 +348,7 @@ if choice == "EDA":
         x="시군구 명칭",
         y="count",
         color="중분류",
-        labels={"count": "개수", "시군구 명칭": "구 이름"},
+        labels={"count": "개수", "시군구 명칭": "자치구"},
         color_discrete_sequence=[
             'rgb(68, 128, 63)',  # 첫 번째 색상
             'rgb(89, 168, 83)',  # 두 번째 색상
@@ -426,7 +426,7 @@ elif choice == "시연":
     # 병합된 GeoDataFrame을 GeoJSON 형식으로 변환
     seoul_gu_geojson = json.loads(seoul_gu_gdf.to_json())
 
-    # 데이터프레임 생성 - 구 이름만 포함
+    # 데이터프레임 생성 - 자치구만 포함
     gu_names = seoul_gu_gdf.index.tolist()
     seoul_info = pd.DataFrame({"gu_name": gu_names})
 
